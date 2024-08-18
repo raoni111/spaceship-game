@@ -7,9 +7,13 @@ export default class Player {
 
     private angle = 0;
 
+    // movement
     private velocity;
     private speed = 200;
     private deceleration = 100;
+
+    private fireCadence = 200 / 2;
+    private fireAuto = true;
 
     constructor(private readonly kb: KaboomCtx) {
         const {
@@ -65,12 +69,46 @@ export default class Player {
     }
 
     private fireBullet() {
+        let isFire = false;
+
+        // auto fire
+        if (this.fireAuto) {
+
+            this.kb.onMouseDown((m) => {
+                if (isFire) {
+                    return;
+                }
+    
+                // create bullet
+                const mousePos = this.kb.mousePos();
+                const bullet = new Bullet(this.kb);
+                bullet.create(this.ctx.pos, mousePos, this.angle);
+                
+                isFire = true;
+                
+                setTimeout(() => {
+                    isFire = false;
+                }, this.fireCadence);
+            });
+            return;
+        }
+
+        // manual fire
         this.kb.onMousePress((m) => {
+            if (isFire) {
+                return;
+            }
+
+            // create bullet
             const mousePos = this.kb.mousePos();
-
             const bullet = new Bullet(this.kb);
-
             bullet.create(this.ctx.pos, mousePos, this.angle);
+            
+            isFire = true;
+            
+            setTimeout(() => {
+                isFire = false;
+            }, this.fireCadence);
         });
     }
 
@@ -109,5 +147,9 @@ export default class Player {
         }
 
         this.ctx.move(this.velocity);
+    }
+
+    public get playerPos() {
+        return this.ctx.pos;
     }
 }
