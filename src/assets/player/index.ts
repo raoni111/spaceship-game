@@ -15,6 +15,8 @@ export default class Player {
     private fireCadence = 200 / 2;
     private fireAuto = true;
 
+    private magnetCollision;
+
     constructor(private readonly kb: KaboomCtx) {
         const {
             sprite,
@@ -24,7 +26,8 @@ export default class Player {
             area,
             pos,
             anchor,
-            
+            rect,
+            z
         } = kb
 
         this.ctx = kb.add([
@@ -39,8 +42,24 @@ export default class Player {
             }),
             'player',
             rotate(0),
-            anchor('center')
+            anchor('center'),
+            z(2)
         ]);
+        
+        this.magnetCollision = kb.add([
+            "player-magnet-collision",
+            pos(this.ctx.pos),
+            rect(600, 600, {
+                fill: false,
+            }),  
+            scale(),
+            body({
+                isStatic: true,
+            }),
+            area(),
+            anchor('center'),
+            z(1)
+        ])
 
         this.velocity = this.kb.vec2(0, 0);
 
@@ -53,11 +72,14 @@ export default class Player {
         this.toLook(mousePos);
     
         this.addDeceleration();
+
+        this.magnetCollision.pos = this.ctx.pos;
     }
 
     private init() {
         this.playerMovement();
         this.fireBullet();
+        this.colletCoin();
     }
 
     private toLook(mousePos: Vec2) {
@@ -147,6 +169,12 @@ export default class Player {
         }
 
         this.ctx.move(this.velocity);
+    }
+
+    private colletCoin() {
+        this.ctx.onCollide("coin", (obj) => {
+            obj.destroy();
+        })
     }
 
     public get playerPos() {
