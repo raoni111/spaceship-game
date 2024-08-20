@@ -1,5 +1,6 @@
 import Coin from '../coin';
 import { KaboomCtx, Vec2 } from "kaboom";
+import Explosion from "../explosion";
 
 export default class Asteroid {
     private readonly ctx;
@@ -65,10 +66,8 @@ export default class Asteroid {
         this.ctx.onDeath(() => {
             this.ctx.destroy();
             this.life.destroy();
-
-            this.kb.play("asteroid-explode", {
-                volume: 0.2,
-            });
+                
+            const explosion = new Explosion(this.kb, this.ctx.pos);
 
             const coin = new Coin(this.kb, this.ctx.pos);
         })
