@@ -3,11 +3,11 @@ import { KaboomCtx, Vec2 } from "kaboom";
 export default class Bullet {
     constructor(private readonly kb: KaboomCtx) {}
 
-    create(playerPos: Vec2, mousePos: Vec2, angle: number) {
+    create(playerPos: Vec2, mousePos: Vec2, angle: number, isEnemyBullet = false) {
         const {sprite, pos, scale, anchor, move, color, offscreen, rotate, area, body} = this.kb
 
         const bullet = this.kb.add([
-            'bullet',
+            isEnemyBullet ? "enemy-bullet" : 'bullet',
             sprite('bullet'),
             scale(0.05),
             pos(playerPos),

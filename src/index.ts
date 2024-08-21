@@ -2,6 +2,7 @@ import kaboom from "kaboom";
 import Player from "./assets/player";
 import Asteroid from "./assets/asteroind";
 import Enemy from './assets/enemy';
+import ItemGenerator from './assets/itemGenerator';
 import "./styles.scss";
 
 const kb = kaboom({
@@ -64,17 +65,30 @@ loadSound("push-coin", "./audio/push-coin.wav");
 
 const player = new Player(kb);
 
-const enemy = new Enemy(kb);
+const itemGenerator = new ItemGenerator(kb);
+
+const enemies: Enemy[] = [];
 
 setInterval(() => {
     const numberRang: number = Math.floor(kb.rand(0, 10));
+    
+    const enemy = new Enemy(kb, player, itemGenerator);
 
-    const asteroid = new Asteroid(kb, player.playerPos);
-    const asteroid2 = new Asteroid(kb, player.playerPos);
+    enemies.push(enemy);
+    
+    const asteroid = new Asteroid(kb, player.playerPos, itemGenerator);
+    const asteroid2 = new Asteroid(kb, player.playerPos, itemGenerator);
 }, 3000)
 
 kb.onUpdate(() => {
     player.update();
 
-    enemy.moveUpdate(player.playerPos);
+    enemies.forEach((enemy, index) => {
+        if (!enemy.isDeath()) {
+            enemies.splice(index, 1);
+            return;
+        }
+        
+        enemy.moveUpdate(player.playerPos);
+    });
 });
