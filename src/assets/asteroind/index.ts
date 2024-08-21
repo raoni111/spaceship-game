@@ -1,12 +1,15 @@
 import Coin from '../coin';
 import { KaboomCtx, Vec2 } from "kaboom";
 import Explosion from "../explosion";
+import itemGenerator from '../itemGenerator';
 
 export default class Asteroid {
     private readonly ctx;
     private readonly life;
 
-    constructor(private readonly kb: KaboomCtx, playerPos: Vec2) {
+    private readonly getCoinCount = 2;
+
+    constructor(private readonly kb: KaboomCtx, playerPos: Vec2, private readonly itemGenerator: itemGenerator) {
         const {
             sprite,
             pos,
@@ -69,7 +72,7 @@ export default class Asteroid {
                 
             const explosion = new Explosion(this.kb, this.ctx.pos);
 
-            const coin = new Coin(this.kb, this.ctx.pos);
+            this.itemGenerator.genCoin(this.getCoinCount, this.ctx.pos);
         })
     }
     

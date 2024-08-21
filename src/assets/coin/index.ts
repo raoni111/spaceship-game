@@ -10,6 +10,7 @@ export default class Coin {
             scale,
             body,
             area,
+            move,
             z,
         } = this.kb;
         
@@ -33,14 +34,38 @@ export default class Coin {
     }
 
     init() {
-        this.ctx.onCollideUpdate("player-magnet-collision", (obj: GameObj<PosComp>, col) => {
-            this.ctx.moveTo(obj.pos, 300)
+        this.moveCoinAndDestroy();
+
+        this.ctx.onCollideUpdate("player-magnet-collision", (obj: GameObj<PosComp>) => {
+            this.ctx.moveTo(obj.pos, 400)
         });
 
         this.ctx.onDestroy(() => {
             this.kb.play("push-coin", {
                 volume: 0.05,
             })
-        })
+        });
+
+    }
+
+    private moveCoinAndDestroy() {
+        const genPosition = this.kb.vec2(
+            this.kb.rand(this.spawnPos.x - 100, this.spawnPos.x + 100),
+            this.kb.rand(this.spawnPos.y - 100, this.spawnPos.y + 100),
+        );
+
+        const stopOnUpdate = this.ctx.onUpdate(() => {
+
+            this.ctx.moveTo(genPosition, 400);
+        });
+        
+        this.kb.wait(0.2, () => {
+            stopOnUpdate.cancel();
+        });
+
+        this.kb.wait(10, () => {
+            this.ctx.clearEvents();
+            this.ctx.destroy();
+        });
     }
 }
