@@ -33,7 +33,7 @@ export default class Player {
         this.ctx = kb.add([
             sprite('starship'),
             pos(this.kb.center()),
-            scale(0.1),
+            scale(0.4),
             area({
                 scale: 1,
             }),
@@ -43,7 +43,10 @@ export default class Player {
             'player',
             rotate(0),
             anchor('center'),
-            z(2)
+            z(2), 
+            {
+                coin: 0,
+            }
         ]);
         
         this.magnetCollision = kb.add([

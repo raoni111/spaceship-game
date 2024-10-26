@@ -18,7 +18,7 @@ export default class Coin {
             'coin',
             sprite('coin'),
             pos(spawnPos),
-            scale(0.15),
+            scale(0.8),
             body({
                 isStatic: true,
             }),
@@ -36,8 +36,10 @@ export default class Coin {
     init() {
         this.moveCoinAndDestroy();
 
-        this.ctx.onCollideUpdate("player-magnet-collision", (obj: GameObj<PosComp>) => {
+        this.ctx.onCollideUpdate("player-magnet-collision", (obj: GameObj<PosComp | {coin: number}>) => {
             this.ctx.moveTo(obj.pos, 400)
+
+            obj.coin++;
         });
 
         this.ctx.onDestroy(() => {

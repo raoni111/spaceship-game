@@ -7,9 +7,9 @@ export default class Bullet {
         const {sprite, pos, scale, anchor, move, color, offscreen, rotate, area, body} = this.kb
 
         const bullet = this.kb.add([
-            isEnemyBullet ? "enemy-bullet" : 'bullet',
-            sprite('bullet'),
-            scale(0.05),
+            isEnemyBullet ? 'enemy-bullet' : 'bullet',
+            sprite(isEnemyBullet ? 'bullet-enemy' : 'bullet'),
+            scale(0.8),
             pos(playerPos),
             move(mousePos.angle(playerPos), 1200),
             rotate(angle - 90),
@@ -17,7 +17,7 @@ export default class Bullet {
             offscreen({ destroy: true}),
             anchor('center'),
             area({
-                scale: 0.1,
+                scale: 1,
             }),
             body({
                 isStatic: true,

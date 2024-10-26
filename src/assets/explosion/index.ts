@@ -13,7 +13,7 @@ export default class Explosion {
 
         this.ctx = this.kb.add([
             sprite("explosion"),
-            scale(1.5),
+            scale(7),
             pos(explodePos),
             anchor("center"),
         ]);

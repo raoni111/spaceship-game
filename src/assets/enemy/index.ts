@@ -32,7 +32,7 @@ export default class Enemy {
         this.ctx = this.kb.add([
             "enemy",
             sprite("starship-enemy"),
-            scale(0.1),
+            scale(0.4),
             pos(enemyPos),
             area(),
             body({
@@ -69,7 +69,12 @@ export default class Enemy {
 
     }
 
-    moveUpdate(playerPos: Vec2) {
+    update(playerPos: Vec2) {
+        
+        this.move(playerPos);
+    }
+
+    move(playerPos: Vec2) {
         this.ctx.moveTo(playerPos, this.velocity);
         this.ctx.angle = returnAngle(playerPos.sub(this.ctx.pos));
     }
