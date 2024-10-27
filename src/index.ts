@@ -88,7 +88,6 @@ setInterval(() => {
     // const asteroid2 = new Asteroid(kb, player.playerPos, itemGenerator);
 }, 3000);
 
-
 kb.onUpdate(() => {
     player.update();
 

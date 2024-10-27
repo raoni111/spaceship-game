@@ -1,5 +1,5 @@
 import returnAngle from '../../utils/returnAngle';
-import { KaboomCtx, Vec2 } from "kaboom";
+import { GameObj, HealthComp, KaboomCtx, Vec2 } from "kaboom";
 import Explosion from '../explosion';
 import itemGenerator from '../itemGenerator';
 
@@ -37,6 +37,8 @@ export default class Missile {
             z(2),
         ]);
 
+        this.collisions();
+
         this.init();
     }
 
@@ -60,13 +62,24 @@ export default class Missile {
     }
 
     move(playerPos: Vec2) {
-        console.log(playerPos);
-
         this.ctx.moveTo(playerPos, this.velocity);
         this.ctx.angle = returnAngle(playerPos.sub(this.ctx.pos)) - 90;
     }
 
     isDeath() {
         return this.ctx.hp() === 0 ? false : true;
+    }
+
+    collisions() {
+        this.ctx.onCollide('player', (obj: GameObj<HealthComp>) => {
+            this.ctx.destroy();
+            const explosion = new Explosion(this.kb, this.ctx.pos);
+
+            if (obj.hp() === 0) {
+                return;
+            }
+
+            obj.hurt(5);
+        })
     }
 }
