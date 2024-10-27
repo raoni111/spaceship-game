@@ -1,5 +1,6 @@
 import Bullet from '../bullet';
 import returnAngle from '../../utils/returnAngle';
+import DisplayPlayerInformation from '../display-player-information'
 import { KaboomCtx, Vec2 } from "kaboom";
 
 export default class Player {
@@ -17,12 +18,15 @@ export default class Player {
 
     private magnetCollision;
 
+    private displayPlayerInformation = new DisplayPlayerInformation()
+
     constructor(private readonly kb: KaboomCtx) {
         const {
             sprite,
             scale,
             body,
             rotate,
+            health,
             area,
             pos,
             anchor,
@@ -43,7 +47,8 @@ export default class Player {
             'player',
             rotate(0),
             anchor('center'),
-            z(2), 
+            z(2),
+            health(100),
             {
                 coin: 0,
             }
@@ -77,12 +82,20 @@ export default class Player {
         this.addDeceleration();
 
         this.magnetCollision.pos = this.ctx.pos;
+
+        this.displayPlayerInformation.displayCoin(this.ctx.coin);
+        this.displayPlayerInformation.displayHeart(this.ctx.hp())
     }
 
     private init() {
         this.playerMovement();
         this.fireBullet();
         this.colletCoin();
+
+        this.ctx.onDeath(() => {
+            this.ctx.destroy();
+            this.magnetCollision.destroy();
+        });
     }
 
     private toLook(mousePos: Vec2) {
@@ -177,6 +190,8 @@ export default class Player {
     private colletCoin() {
         this.ctx.onCollide("coin", (obj) => {
             obj.destroy();
+
+            this.ctx.coin++;
         })
     }
 

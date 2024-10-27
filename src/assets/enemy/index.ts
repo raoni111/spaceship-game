@@ -1,4 +1,4 @@
-import { AreaComp, GameObj, KaboomCtx, PosComp, Vec2 } from "kaboom";
+import { AreaComp, GameObj, HealthComp, KaboomCtx, PosComp, Vec2 } from "kaboom";
 import returnAngle from "../../utils/returnAngle";
 import Explosion from "../explosion";
 import Player from "../player";
@@ -53,19 +53,33 @@ export default class Enemy {
 
         this.ctx.onDeath(() => {
             const explosion = new Explosion(this.kb, this.ctx.pos);
-
+            
             this.itemGenerator.genCoin(this.getCoinCount, this.ctx.pos);
-
+            
             this.ctx.destroy();
+            
+            clearInterval(this.bulletIntervalId);
         })
     }
-
+    
     private onCollide() {
         this.ctx.onCollide("bullet", (obj) => {
             obj.destroy();
-
+            
             this.ctx.hurt(10);
         });
+        
+        this.ctx.onCollide("player", (obj: GameObj<HealthComp>) => {
+            const explosion = new Explosion(this.kb, this.ctx.pos);
+            this.ctx.destroy();
+            clearInterval(this.bulletIntervalId);
+
+            if (obj.hp() === 0) {
+                return;
+            }
+
+            obj.hurt(5);
+        })
 
     }
 

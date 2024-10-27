@@ -1,0 +1,21 @@
+* {
+    font-family: sans-serif;
+}
+
+.player-information {
+    position: fixed;
+}
+.player-information h1 {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    color: white;
+}
+
+.player-information h1 #coin-amount-content {
+    
+}
+
+.player-information h1 span {
+    margin-left: 1rem;
+}
