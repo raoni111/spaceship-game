@@ -6,6 +6,7 @@ import Missile from './assets/missile';
 import ItemGenerator from './assets/itemGenerator';
 import "./styles.scss";
 import Explosion from "./assets/explosion";
+import Game from './assets/game-costumer';
 
 const kb = kaboom({
     canvas: document.getElementById("my-canvas") as HTMLCanvasElement,
@@ -71,32 +72,4 @@ loadSound("push-coin", "./audio/push-coin.wav");
 
 const player = new Player(kb);
 
-const itemGenerator = new ItemGenerator(kb);
-
-const enemies: Array<Enemy | Missile> = [];
-
-setInterval(() => {
-    const numberRang: number = Math.floor(kb.rand(0, 10));
-    
-    const enemy = new Enemy(kb, player, itemGenerator);
-    const missile = new Missile(kb, itemGenerator);
-
-    enemies.push(enemy);
-    enemies.push(missile);
-    
-    // const asteroid = new Asteroid(kb, player.playerPos, itemGenerator);
-    // const asteroid2 = new Asteroid(kb, player.playerPos, itemGenerator);
-}, 3000);
-
-kb.onUpdate(() => {
-    player.update();
-
-    enemies.forEach((enemy, index) => {
-        if (!enemy.isDeath()) {
-            enemies.splice(index, 1);
-            return;
-        }
-        
-        enemy.update(player.playerPos);
-    });
-});
+const game = new Game(kb, player);

@@ -4,7 +4,7 @@ import DisplayPlayerInformation from '../display-player-information'
 import { KaboomCtx, Vec2 } from "kaboom";
 
 export default class Player {
-    private readonly ctx;
+    public readonly ctx;
 
     private angle = 0;
 
@@ -15,6 +15,8 @@ export default class Player {
 
     private fireCadence = 200 / 2;
     private fireAuto = true;
+
+    public death = false;
 
     private magnetCollision;
 
@@ -75,6 +77,10 @@ export default class Player {
     }
 
     update() {
+        if (this.death) {
+            return;
+        }
+
         const mousePos = this.kb.mousePos();
 
         this.toLook(mousePos);
@@ -95,6 +101,7 @@ export default class Player {
         this.ctx.onDeath(() => {
             this.ctx.destroy();
             this.magnetCollision.destroy();
+            this.death = true;
         });
     }
 
@@ -107,12 +114,17 @@ export default class Player {
     }
 
     private fireBullet() {
+
         let isFire = false;
+        
 
         // auto fire
         if (this.fireAuto) {
 
             this.kb.onMouseDown((m) => {
+                if (this.death) {
+                    return;
+                }
                 if (isFire) {
                     return;
                 }
@@ -133,6 +145,9 @@ export default class Player {
 
         // manual fire
         this.kb.onMousePress((m) => {
+            if (this.death) {
+                return;
+            }
             if (isFire) {
                 return;
             }
@@ -151,6 +166,10 @@ export default class Player {
     }
 
     private playerMovement() {
+        if (this.death) {
+            return;
+        }
+
         this.kb.onKeyDown((key) => {
             switch (key) {
                 case 'd':

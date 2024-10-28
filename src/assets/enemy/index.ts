@@ -103,11 +103,18 @@ export default class Enemy {
             }
     
             const bullet = new Bullet(this.kb);
-            bullet.create(this.ctx.pos, this.player.playerPos, this.ctx.angle, true);
+            bullet.create(this.ctx.pos, this.player.playerPos, this.ctx.angle, true, 500);
         }, 1000);
     }
 
     isDeath() {
         return this.ctx.hp() === 0 ? false : true;
+    }
+
+    destroy() {
+        const explosion = new Explosion(this.kb, this.ctx.pos);
+        this.ctx.destroy();
+
+        clearInterval(this.bulletIntervalId);
     }
 }
