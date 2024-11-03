@@ -82,4 +82,9 @@ export default class Missile {
             obj.hurt(5);
         })
     }
+
+    destroy() {
+        const explosion = new Explosion(this.kb, this.ctx.pos);
+        this.ctx.destroy();
+    }
 }

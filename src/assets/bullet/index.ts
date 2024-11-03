@@ -3,7 +3,7 @@ import { AnchorComp, AreaComp, HealthComp, BodyComp, ColorComp, EmptyComp, GameO
 export default class Bullet {
     constructor(private readonly kb: KaboomCtx) {}
 
-    create(playerPos: Vec2, mousePos: Vec2, angle: number, isEnemyBullet = false) {
+    create(playerPos: Vec2, mousePos: Vec2, angle: number, isEnemyBullet = false,  speed = 1200) {
         const {sprite, pos, scale, anchor, move, color, offscreen, rotate, area, body} = this.kb
 
         const isEnemy = isEnemyBullet ? 'enemy-bullet' : 'bullet';
@@ -13,7 +13,7 @@ export default class Bullet {
             sprite(isEnemyBullet ? 'bullet-enemy' : 'bullet'),
             scale(0.8),
             pos(playerPos),
-            move(mousePos.angle(playerPos), 1200),
+            move(mousePos.angle(playerPos), speed),
             rotate(angle - 90),
             color(255, 255, 255),
             offscreen({ destroy: true}),
@@ -37,7 +37,6 @@ export default class Bullet {
         bullet:  GameObj<SpriteComp | ScaleComp | PosComp | EmptyComp | RotateComp | ColorComp | OffScreenComp | AnchorComp | AreaComp | BodyComp>,
         isEnemy: string,
     ) {
-        console.log(isEnemy);
         if (isEnemy === 'enemy-bullet') {
             bullet.onCollide('player', (obj: GameObj<HealthComp>) => {
                 bullet.destroy();
