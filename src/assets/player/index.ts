@@ -39,7 +39,7 @@ export default class Player {
         this.ctx = kb.add([
             sprite('starship'),
             pos(this.kb.center()),
-            scale(0.4),
+            scale(2),
             area({
                 scale: 1,
             }),

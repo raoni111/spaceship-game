@@ -55,7 +55,7 @@ class SpawnEnemyManager {
             }
 
             round++;
-        }, this.kb.rand(3000, 10000));
+        }, this.kb.rand(1000, 5000));
     }
 
     update() {

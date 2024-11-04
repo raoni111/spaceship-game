@@ -21,9 +21,27 @@ const {
 
 loadSprite("starship", "./sprites/spaceship-2.png");
 loadSprite("starship-enemy", "./sprites/spaceship.png");
-loadSprite("bullet", "./sprites/bullet.png");
 loadSprite("bullet-enemy", "./sprites/bullet-enemy.png");
 loadSprite("asteroid", "./sprites/asteroid.png");
+
+loadSpriteAtlas("./sprites/bullet.png", {
+    "bullet": {
+        x: 0,
+        y: 0,
+        width: 76,
+        height: 19,
+        sliceX: 4,
+        sliceY: 1,
+        anims: {
+            shoot: {
+                from: 0,
+                to: 3,
+                loop: true,
+            }
+        }
+
+    }
+});
 
 loadSpriteAtlas("./sprites/coins.png", {
     "coin": {
@@ -35,7 +53,7 @@ loadSpriteAtlas("./sprites/coins.png", {
         anims: {
             idle: {
                 from: 0,
-                to: 3,
+                to: 0,
                 loop: true,
             },
         }

@@ -1,5 +1,5 @@
 import { AreaComp, GameObj, HealthComp, KaboomCtx, PosComp, Vec2 } from "kaboom";
-import returnAngle from "../../utils/returnAngle";
+import returnAngle, { returnRadio } from "../../utils/returnAngle";
 import Explosion from "../explosion";
 import Player from "../player";
 import Bullet from "../bullet";
@@ -27,7 +27,9 @@ export default class Enemy {
             z,
         } = this.kb;
 
-        const enemyPos = this.kb.vec2(this.kb.rand(0, this.kb.width()), this.kb.rand(0, this.kb.height()));
+        let enemyPos = this.createEnemySpawn();
+
+
 
         this.ctx = this.kb.add([
             "enemy",
@@ -60,6 +62,18 @@ export default class Enemy {
             
             clearInterval(this.bulletIntervalId);
         })
+    }
+
+    private createEnemySpawn(): Vec2 {
+        const pos =  this.kb.vec2(this.kb.rand(0, this.kb.width()), this.kb.rand(0, this.kb.height()));
+    
+        if (returnRadio(pos) < 150) {
+            return this.createEnemySpawn();
+        }
+
+        console.log(returnRadio(pos))
+
+        return pos;
     }
     
     private onCollide() {

@@ -6,3 +6,9 @@ export default function returnAngle(pos: Vec2) {
 
     return angle
 }
+
+export function returnRadio(pos: Vec2): number {
+    const radio = Math.floor(Math.atan2(pos.y, pos.x) * 180);
+
+    return radio
+}
