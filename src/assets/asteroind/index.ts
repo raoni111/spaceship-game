@@ -1,5 +1,4 @@
-import Coin from '../coin';
-import { KaboomCtx, Vec2 } from "kaboom";
+import { GameObj, HealthComp, KaboomCtx, Vec2 } from "kaboom";
 import Explosion from "../explosion";
 import itemGenerator from '../itemGenerator';
 
@@ -8,6 +7,8 @@ export default class Asteroid {
     private readonly life;
 
     private readonly getCoinCount = 2;
+
+    public type = 'Asteroid';
 
     constructor(private readonly kb: KaboomCtx, playerPos: Vec2, private readonly itemGenerator: itemGenerator) {
         const {
@@ -54,6 +55,7 @@ export default class Asteroid {
                 width: 190, 
                 font: "sans-serif",
             }),
+            scale(1),
             pos(0, 0),
             color(255, 255, 255),
             z(2),
@@ -75,6 +77,15 @@ export default class Asteroid {
             this.itemGenerator.genCoin(this.getCoinCount, this.ctx.pos);
         })
     }
+
+    isDeath() {
+        return this.ctx.hp() === 0 ? false : true;
+    }
+
+    destroy() {
+            const explosion = new Explosion(this.kb, this.ctx.pos);
+            this.ctx.destroy();
+    }
     
     
     collides() {
@@ -83,7 +94,7 @@ export default class Asteroid {
 
             this.ctx.hurt(10)
 
-            if (this.ctx.hp() > 10) {
+            if (this.ctx.hp() > 20) {
                 this.ctx.scale = this.kb.vec2(0.01 * this.ctx.hp() / 2);
             }
 
@@ -93,5 +104,18 @@ export default class Asteroid {
 
             this.life.text = `${this.ctx.hp()}`;
         });
+
+        this.ctx.onCollide("player", (object: GameObj<HealthComp>) => {
+            this.ctx.destroy();
+
+            object.hurt(5);
+
+            const explosion = new Explosion(this.kb, this.ctx.pos);
+
+        });
+
+        
+
+        
     }
 }

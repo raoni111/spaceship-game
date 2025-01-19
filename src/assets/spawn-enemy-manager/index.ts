@@ -7,7 +7,7 @@ import Asteroid from '../asteroind';
 
 class SpawnEnemyManager {
     private intervalId: NodeJS.Timeout;
-    public readonly enemies: Array<Enemy | Missile> = []
+    public readonly enemies: Array<Enemy | Missile | Asteroid> = []
 
     constructor(private readonly kb: KaboomCtx, private readonly player: Player, private readonly itemGenerator: itemGenerator) {}
 
@@ -23,7 +23,7 @@ class SpawnEnemyManager {
             console.log(round);
 
             const enemiesPossibility = [
-                'enemy', 'enemy', 'missile'
+                'enemy', 'enemy', 'missile', 'asteroid'
 
             ]
 
@@ -35,8 +35,6 @@ class SpawnEnemyManager {
 
             for (let i = 0; i <= enemyCount; i++) {
                 const enemySelected = enemiesPossibility[Math.floor(this.kb.rand(0, enemiesPossibility.length))];
-               console.log(enemySelected)
-
 
                 switch (enemySelected) {
                     case 'enemy':
@@ -49,13 +47,16 @@ class SpawnEnemyManager {
                         this.enemies.push(missile);
 
                         break;
+                    case 'asteroid':
+                        const asteroid = new Asteroid(this.kb, this.player.ctx.pos, this.itemGenerator);
+                        this.enemies.push(asteroid);
                     default:
                         break;
                 }
             }
 
             round++;
-        }, this.kb.rand(1000, 5000));
+        }, this.kb.rand(2000, 5000));
     }
 
     update() {
@@ -64,6 +65,12 @@ class SpawnEnemyManager {
                 this.enemies.splice(index, 1);
                 return;
             }
+
+            if (enemy.type === 'Asteroid') {
+                return;
+            }
+
+            enemy = enemy as Enemy | Missile;
 
             enemy.update(this.player.playerPos);
         });

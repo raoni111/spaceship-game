@@ -1,4 +1,4 @@
-import { AreaComp, GameObj, HealthComp, KaboomCtx, PosComp, Vec2 } from "kaboom";
+import { GameObj, HealthComp, KaboomCtx, Vec2 } from "kaboom";
 import returnAngle, { returnRadio } from "../../utils/returnAngle";
 import Explosion from "../explosion";
 import Player from "../player";
@@ -13,6 +13,8 @@ export default class Enemy {
     private bulletIntervalId: NodeJS.Timeout;
 
     private readonly getCoinCount = 5;
+
+    public type = 'Enemy';
 
     constructor(private readonly kb: KaboomCtx, private readonly player: Player, private readonly itemGenerator: itemGenerator) {
         const {
@@ -34,7 +36,7 @@ export default class Enemy {
         this.ctx = this.kb.add([
             "enemy",
             sprite("starship-enemy"),
-            scale(0.4),
+            scale(.5),
             pos(enemyPos),
             area(),
             body({
@@ -70,8 +72,6 @@ export default class Enemy {
         if (returnRadio(pos) < 150) {
             return this.createEnemySpawn();
         }
-
-        console.log(returnRadio(pos))
 
         return pos;
     }

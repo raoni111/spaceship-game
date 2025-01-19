@@ -8,6 +8,8 @@ export default class Missile {
 
     private readonly velocity = 200;
 
+    public type = 'Missile';
+    
     constructor(private readonly kb: KaboomCtx, private readonly itemGenerate: itemGenerator) {
         const missilePos = this.createEnemySpawn();
         

@@ -18,7 +18,7 @@ export default class Coin {
             'coin',
             sprite('coin'),
             pos(spawnPos),
-            scale(0.8),
+            scale(1),
             body({
                 isStatic: true,
             }),

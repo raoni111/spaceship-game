@@ -19,3 +19,7 @@
 .player-information h1 span {
     margin-left: 1rem;
 }
+
+.death-content {
+    position: fixed;
+}
