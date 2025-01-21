@@ -1,10 +1,10 @@
 import Bullet from '../bullet';
 import returnAngle from '../../utils/returnAngle';
 import DisplayPlayerInformation from '../display-player-information'
-import { KaboomCtx, Vec2 } from "kaboom";
+import { AnchorComp, AreaComp, BodyComp, GameObj, HealthComp, KaboomCtx, PosComp, RotateComp, ScaleComp, SpriteComp, Vec2, ZComp } from "kaboom";
 
 export default class Player {
-    public readonly ctx;
+    public readonly ctx:  GameObj<SpriteComp | ScaleComp | PosComp | AreaComp | BodyComp | HealthComp | ZComp | AnchorComp | RotateComp | {coin: number}>;
 
     private angle = 0;
 
@@ -39,7 +39,7 @@ export default class Player {
         this.ctx = kb.add([
             sprite('starship'),
             pos(this.kb.center()),
-            scale(2),
+            scale(0.5),
             area({
                 scale: 1,
             }),
