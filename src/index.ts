@@ -1,11 +1,7 @@
 import kaboom from "kaboom";
 import Player from "./assets/player";
-import Asteroid from "./assets/asteroind";
-import Enemy from './assets/enemy';
-import Missile from './assets/missile';
-import ItemGenerator from './assets/itemGenerator';
+import DeathUI from "./assets/DeathUI";
 import "./styles.scss";
-import Explosion from "./assets/explosion";
 import Game from './assets/game-costumer';
 
 const kb = kaboom({
@@ -88,6 +84,11 @@ loadSound("asteroid-explode", "./audio/asteroid-explode.wav");
 loadSound("bullet-impact-into-asteroid", "./audio/bullet-impact-into-asteroid.wav");
 loadSound("push-coin", "./audio/push-coin.wav");
 
+const deathUIElement = document.getElementById('death-content-id') as HTMLDivElement;
+const restartButton = document.getElementById('restart-button-id') as HTMLButtonElement;
+
 const player = new Player(kb);
 
 const game = new Game(kb, player);
+
+const deathUI = new DeathUI(deathUIElement, restartButton, player);
