@@ -98,7 +98,6 @@ export default class Enemy {
     }
 
     update(playerPos: Vec2) {
-        
         this.move(playerPos);
     }
 
