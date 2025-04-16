@@ -1,5 +1,5 @@
-import returnAngle from '../../utils/returnAngle';
-import { KaboomCtx, Vec2 } from "kaboom";
+import returnAngle, { returnRadio } from '../../utils/returnAngle';
+import { GameObj, HealthComp, KaboomCtx, Vec2 } from "kaboom";
 import Explosion from '../explosion';
 import itemGenerator from '../itemGenerator';
 
@@ -8,8 +8,10 @@ export default class Missile {
 
     private readonly velocity = 200;
 
+    public type = 'Missile';
+    
     constructor(private readonly kb: KaboomCtx, private readonly itemGenerate: itemGenerator) {
-        const missilePos = this.kb.vec2(this.kb.rand(0, this.kb.width()), this.kb.rand(0, this.kb.height()));
+        const missilePos = this.createEnemySpawn();
         
         const {
             sprite,
@@ -37,6 +39,8 @@ export default class Missile {
             z(2),
         ]);
 
+        this.collisions();
+
         this.init();
     }
 
@@ -55,18 +59,47 @@ export default class Missile {
         })
     }
 
+    private createEnemySpawn(): Vec2 {
+        const pos =  this.kb.vec2(this.kb.rand(0, this.kb.width()), this.kb.rand(0, this.kb.height()));
+        
+
+        if (returnRadio(pos) < 200) {
+            return this.createEnemySpawn();
+        }
+
+        console.log(returnAngle(pos))
+
+        return pos;
+    }
+
     update(playerPos: Vec2) {
         this.move(playerPos);
     }
 
     move(playerPos: Vec2) {
-        console.log(playerPos);
-
         this.ctx.moveTo(playerPos, this.velocity);
         this.ctx.angle = returnAngle(playerPos.sub(this.ctx.pos)) - 90;
     }
 
     isDeath() {
         return this.ctx.hp() === 0 ? false : true;
+    }
+
+    collisions() {
+        this.ctx.onCollide('player', (obj: GameObj<HealthComp>) => {
+            this.ctx.destroy();
+            const explosion = new Explosion(this.kb, this.ctx.pos);
+
+            if (obj.hp() === 0) {
+                return;
+            }
+
+            obj.hurt(5);
+        })
+    }
+
+    destroy() {
+        const explosion = new Explosion(this.kb, this.ctx.pos);
+        this.ctx.destroy();
     }
 }

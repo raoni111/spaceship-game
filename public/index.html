@@ -2,9 +2,29 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>Webpack App</title>
+        <title>Spaceship Game</title>
+        <link rel="icon" type="image/x-icon" href="./sprites/spaceship-2.png">
     </head>
+    <link rel="stylesheet" href="style.css">
     <body>
+        <div class="player-information">
+            <h1>
+                <img width="50" src="./heart-pixelate.png" alt="">
+                <span id="heart-amount-content">0</span>
+            </h1>
+            <h1>
+                <img width="50" src="./coin-gif.gif" alt="">
+                <span id="coin-amount-content">0</span>
+            </h1>
+        </div>
+        <div class="death-content" id="death-content-id">
+            <div class="option-content">
+                <h1>Você Morreu!</h1>
+            </div>
+            <div class="button-content">
+                <button id="restart-button-id">Jogar Novamente</button>
+            </div>
+        </div>
         <canvas id="my-canvas"></canvas>
     </body>
     

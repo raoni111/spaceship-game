@@ -1,5 +1,5 @@
-import { AreaComp, GameObj, KaboomCtx, PosComp, Vec2 } from "kaboom";
-import returnAngle from "../../utils/returnAngle";
+import { GameObj, HealthComp, KaboomCtx, Vec2 } from "kaboom";
+import returnAngle, { returnRadio } from "../../utils/returnAngle";
 import Explosion from "../explosion";
 import Player from "../player";
 import Bullet from "../bullet";
@@ -14,6 +14,8 @@ export default class Enemy {
 
     private readonly getCoinCount = 5;
 
+    public type = 'Enemy';
+
     constructor(private readonly kb: KaboomCtx, private readonly player: Player, private readonly itemGenerator: itemGenerator) {
         const {
             sprite,
@@ -27,12 +29,14 @@ export default class Enemy {
             z,
         } = this.kb;
 
-        const enemyPos = this.kb.vec2(this.kb.rand(0, this.kb.width()), this.kb.rand(0, this.kb.height()));
+        let enemyPos = this.createEnemySpawn();
+
+
 
         this.ctx = this.kb.add([
             "enemy",
             sprite("starship-enemy"),
-            scale(0.4),
+            scale(.5),
             pos(enemyPos),
             area(),
             body({
@@ -53,24 +57,47 @@ export default class Enemy {
 
         this.ctx.onDeath(() => {
             const explosion = new Explosion(this.kb, this.ctx.pos);
-
+            
             this.itemGenerator.genCoin(this.getCoinCount, this.ctx.pos);
-
+            
             this.ctx.destroy();
+            
+            clearInterval(this.bulletIntervalId);
         })
     }
 
+    private createEnemySpawn(): Vec2 {
+        const pos =  this.kb.vec2(this.kb.rand(0, this.kb.width()), this.kb.rand(0, this.kb.height()));
+    
+        if (returnRadio(pos) < 150) {
+            return this.createEnemySpawn();
+        }
+
+        return pos;
+    }
+    
     private onCollide() {
         this.ctx.onCollide("bullet", (obj) => {
             obj.destroy();
-
+            
             this.ctx.hurt(10);
         });
+        
+        this.ctx.onCollide("player", (obj: GameObj<HealthComp>) => {
+            const explosion = new Explosion(this.kb, this.ctx.pos);
+            this.ctx.destroy();
+            clearInterval(this.bulletIntervalId);
+
+            if (obj.hp() === 0) {
+                return;
+            }
+
+            obj.hurt(5);
+        })
 
     }
 
     update(playerPos: Vec2) {
-        
         this.move(playerPos);
     }
 
@@ -89,11 +116,18 @@ export default class Enemy {
             }
     
             const bullet = new Bullet(this.kb);
-            bullet.create(this.ctx.pos, this.player.playerPos, this.ctx.angle, true);
+            bullet.create(this.ctx.pos, this.player.playerPos, this.ctx.angle, true, 500);
         }, 1000);
     }
 
     isDeath() {
         return this.ctx.hp() === 0 ? false : true;
+    }
+
+    destroy() {
+        const explosion = new Explosion(this.kb, this.ctx.pos);
+        this.ctx.destroy();
+
+        clearInterval(this.bulletIntervalId);
     }
 }

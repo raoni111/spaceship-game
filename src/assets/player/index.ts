@@ -1,9 +1,10 @@
 import Bullet from '../bullet';
 import returnAngle from '../../utils/returnAngle';
-import { KaboomCtx, Vec2 } from "kaboom";
+import DisplayPlayerInformation from '../display-player-information'
+import { AnchorComp, AreaComp, BodyComp, GameObj, HealthComp, KaboomCtx, PosComp, RotateComp, ScaleComp, SpriteComp, Vec2, ZComp } from "kaboom";
 
 export default class Player {
-    private readonly ctx;
+    public readonly ctx:  GameObj<SpriteComp | ScaleComp | PosComp | AreaComp | BodyComp | HealthComp | ZComp | AnchorComp | RotateComp | {coin: number}>;
 
     private angle = 0;
 
@@ -15,7 +16,11 @@ export default class Player {
     private fireCadence = 200 / 2;
     private fireAuto = true;
 
+    public death = false;
+
     private magnetCollision;
+
+    private displayPlayerInformation = new DisplayPlayerInformation()
 
     constructor(private readonly kb: KaboomCtx) {
         const {
@@ -23,6 +28,7 @@ export default class Player {
             scale,
             body,
             rotate,
+            health,
             area,
             pos,
             anchor,
@@ -33,7 +39,7 @@ export default class Player {
         this.ctx = kb.add([
             sprite('starship'),
             pos(this.kb.center()),
-            scale(0.4),
+            scale(0.5),
             area({
                 scale: 1,
             }),
@@ -43,7 +49,8 @@ export default class Player {
             'player',
             rotate(0),
             anchor('center'),
-            z(2), 
+            z(2),
+            health(100),
             {
                 coin: 0,
             }
@@ -70,6 +77,10 @@ export default class Player {
     }
 
     update() {
+        if (this.death) {
+            return;
+        }
+
         const mousePos = this.kb.mousePos();
 
         this.toLook(mousePos);
@@ -77,12 +88,21 @@ export default class Player {
         this.addDeceleration();
 
         this.magnetCollision.pos = this.ctx.pos;
+
+        this.displayPlayerInformation.displayCoin(this.ctx.coin);
+        this.displayPlayerInformation.displayHeart(this.ctx.hp())
     }
 
     private init() {
         this.playerMovement();
         this.fireBullet();
         this.colletCoin();
+
+        this.ctx.onDeath(() => {
+            this.ctx.destroy();
+            this.magnetCollision.destroy();
+            this.death = true;
+        });
     }
 
     private toLook(mousePos: Vec2) {
@@ -94,12 +114,17 @@ export default class Player {
     }
 
     private fireBullet() {
+
         let isFire = false;
+        
 
         // auto fire
         if (this.fireAuto) {
 
             this.kb.onMouseDown((m) => {
+                if (this.death) {
+                    return;
+                }
                 if (isFire) {
                     return;
                 }
@@ -120,6 +145,9 @@ export default class Player {
 
         // manual fire
         this.kb.onMousePress((m) => {
+            if (this.death) {
+                return;
+            }
             if (isFire) {
                 return;
             }
@@ -138,6 +166,10 @@ export default class Player {
     }
 
     private playerMovement() {
+        if (this.death) {
+            return;
+        }
+
         this.kb.onKeyDown((key) => {
             switch (key) {
                 case 'd':
@@ -177,6 +209,8 @@ export default class Player {
     private colletCoin() {
         this.ctx.onCollide("coin", (obj) => {
             obj.destroy();
+
+            this.ctx.coin++;
         })
     }
 

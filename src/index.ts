@@ -1,11 +1,8 @@
 import kaboom from "kaboom";
 import Player from "./assets/player";
-import Asteroid from "./assets/asteroind";
-import Enemy from './assets/enemy';
-import Missile from './assets/missile';
-import ItemGenerator from './assets/itemGenerator';
+import DeathUI from "./assets/DeathUI";
 import "./styles.scss";
-import Explosion from "./assets/explosion";
+import Game from './assets/game-costumer';
 
 const kb = kaboom({
     canvas: document.getElementById("my-canvas") as HTMLCanvasElement,
@@ -20,9 +17,27 @@ const {
 
 loadSprite("starship", "./sprites/spaceship-2.png");
 loadSprite("starship-enemy", "./sprites/spaceship.png");
-loadSprite("bullet", "./sprites/bullet.png");
 loadSprite("bullet-enemy", "./sprites/bullet-enemy.png");
 loadSprite("asteroid", "./sprites/asteroid.png");
+
+loadSpriteAtlas("./sprites/bullet.png", {
+    "bullet": {
+        x: 0,
+        y: 0,
+        width: 76,
+        height: 19,
+        sliceX: 4,
+        sliceY: 1,
+        anims: {
+            shoot: {
+                from: 0,
+                to: 3,
+                loop: true,
+            }
+        }
+
+    }
+});
 
 loadSpriteAtlas("./sprites/coins.png", {
     "coin": {
@@ -34,7 +49,7 @@ loadSpriteAtlas("./sprites/coins.png", {
         anims: {
             idle: {
                 from: 0,
-                to: 3,
+                to: 0,
                 loop: true,
             },
         }
@@ -69,35 +84,11 @@ loadSound("asteroid-explode", "./audio/asteroid-explode.wav");
 loadSound("bullet-impact-into-asteroid", "./audio/bullet-impact-into-asteroid.wav");
 loadSound("push-coin", "./audio/push-coin.wav");
 
+const deathUIElement = document.getElementById('death-content-id') as HTMLDivElement;
+const restartButton = document.getElementById('restart-button-id') as HTMLButtonElement;
+
 const player = new Player(kb);
 
-const itemGenerator = new ItemGenerator(kb);
+const game = new Game(kb, player);
 
-const enemies: Array<Enemy | Missile> = [];
-
-setInterval(() => {
-    const numberRang: number = Math.floor(kb.rand(0, 10));
-    
-    const enemy = new Enemy(kb, player, itemGenerator);
-    const missile = new Missile(kb, itemGenerator);
-
-    enemies.push(enemy);
-    enemies.push(missile);
-    
-    // const asteroid = new Asteroid(kb, player.playerPos, itemGenerator);
-    // const asteroid2 = new Asteroid(kb, player.playerPos, itemGenerator);
-}, 3000);
-
-
-kb.onUpdate(() => {
-    player.update();
-
-    enemies.forEach((enemy, index) => {
-        if (!enemy.isDeath()) {
-            enemies.splice(index, 1);
-            return;
-        }
-        
-        enemy.update(player.playerPos);
-    });
-});
+const deathUI = new DeathUI(deathUIElement, restartButton, player);
